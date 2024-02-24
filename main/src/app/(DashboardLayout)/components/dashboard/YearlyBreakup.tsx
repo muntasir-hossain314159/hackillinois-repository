@@ -20,12 +20,12 @@ const YearlyBreakup = () => {
 
   const categoryColors: { [key: string]: string } = {
     "Grocery shopping": "#FFA07A", // Light Salmon
-    Gasoline: "#FFD700", // Gold
+    "Gasoline": "#FFD700", // Gold
     "Utility bill": "#87CEEB", // Sky Blue
-    Restaurant: "#32CD32", // Lime Green
+    "Restaurant": "#32CD32", // Lime Green
     "Online purchase": "#BA55D3", // Medium Orchid
-    Clothing: "#FF4500", // Orange Red
-    Entertainment: "#20B2AA", // Light Sea Green
+    "Clothing": "#FF4500", // Orange Red
+    "Entertainment": "#20B2AA", // Light Sea Green
   };
 
   const seriesData = [120, 80, 70, 90, 100, 60, 50]; // Replace with actual data

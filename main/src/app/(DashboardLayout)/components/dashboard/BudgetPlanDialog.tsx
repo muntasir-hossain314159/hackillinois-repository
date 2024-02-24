@@ -21,7 +21,19 @@ function BudgetPlanDialog({ open, onClose }) {
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      PaperProps={{
+        style: {
+          width: "30%", // You can specify the width as a percentage or pixels
+          maxWidth: "none", // This overrides the default maxWidth
+          height: "auto", // You can also specify the height
+          maxHeight: "90vh", // This sets the max height to 90% of the viewport height
+          // Add more custom styles if needed
+        },
+      }}
+    >
       <DialogTitle>Start My Budget Plan</DialogTitle>
       <DialogContent>
         <TextField
