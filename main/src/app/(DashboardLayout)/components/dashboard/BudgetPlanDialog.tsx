@@ -13,10 +13,12 @@ interface BudgetPlanDialogProps {
 
 function BudgetPlanDialog({ open, onClose }) {
   const [amount, setAmount] = useState("");
+  const [amountMonths, setAmountMonths] = useState("");
 
   const handleConfirm = () => {
     // You would also call the local API here
     console.log(`User wants to save: $${amount} per month`);
+    console.log(`User wants to save over: ${amountMonths} months`)
     onClose(); // Close the dialog
   };
 
@@ -46,6 +48,17 @@ function BudgetPlanDialog({ open, onClose }) {
           variant="outlined"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
+        />
+        <TextField
+          autoFocus
+          margin="dense"
+          id="amountMonths"
+          label="How many months will this plan last?"
+          type="number"
+          fullWidth
+          variant="outlined"
+          value={amountMonths}
+          onChange={(e) => setAmountMonths(e.target.value)}
         />
       </DialogContent>
       <DialogActions>

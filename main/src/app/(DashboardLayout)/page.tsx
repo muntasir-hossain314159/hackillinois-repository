@@ -9,6 +9,7 @@ import ProductPerformance from "@/app/(DashboardLayout)/components/dashboard/Pro
 import Blog from "@/app/(DashboardLayout)/components/dashboard/Blog";
 import MonthlyEarnings from "@/app/(DashboardLayout)/components/dashboard/MonthlyEarnings";
 import PredictiveSpending from "./components/dashboard/PredictiveSpending";
+import ExpenseChart from "./components/dashboard/ExpenseChart";
 import { BudgetPlanDialog } from "./components/dashboard/BudgetPlanDialog";
 import { useState } from "react";
 
@@ -55,6 +56,9 @@ function Dashboard() {
                 <PredictiveSpending />
               </Grid>
             </Grid>
+          </Grid>
+          <Grid item xs={12} lg={6}>
+            {/* <ExpenseChart /> */}
           </Grid>
         </Grid>
       </Box>
