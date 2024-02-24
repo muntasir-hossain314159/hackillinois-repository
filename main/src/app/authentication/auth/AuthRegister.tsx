@@ -1,10 +1,14 @@
 import React, { useState } from "react";
-import authService from "../auth1/authService.js";
+import { Box, Typography, Button, Stack } from "@mui/material";
+import CustomTextField from "@/app/(DashboardLayout)/components/forms/theme-elements/CustomTextField";
+import authService from "../auth1/authService";
+
 interface AuthProps {
   title?: string;
   subtitle?: React.ReactNode;
   subtext?: React.ReactNode;
 }
+
 const AuthRegister: React.FC<AuthProps> = ({ title, subtitle, subtext }) => {
   const [formData, setFormData] = useState({
     name: "",
@@ -12,9 +16,11 @@ const AuthRegister: React.FC<AuthProps> = ({ title, subtitle, subtext }) => {
     password: "",
   });
   const [error, setError] = useState<string | null>(null);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -30,33 +36,67 @@ const AuthRegister: React.FC<AuthProps> = ({ title, subtitle, subtext }) => {
       );
     }
   };
+
   return (
     <form onSubmit={handleSubmit}>
-      {" "}
-      {title && <h2>{title}</h2>} {subtext} <label htmlFor="name">Name</label>{" "}
-      <input
-        type="text"
-        name="name"
-        value={formData.name}
-        onChange={handleChange}
-      />{" "}
-      <label htmlFor="email">Email</label>{" "}
-      <input
-        type="email"
-        name="email"
-        value={formData.email}
-        onChange={handleChange}
-      />{" "}
-      <label htmlFor="password">Password</label>{" "}
-      <input
-        type="password"
-        name="password"
-        value={formData.password}
-        onChange={handleChange}
-      />{" "}
-      <button type="submit">Register</button> {error && <div>{error}</div>}{" "}
-      {subtitle}{" "}
+      {title && (
+        <Typography fontWeight="700" variant="h2" mb={1}>
+          {title}
+        </Typography>
+      )}
+
+      {subtext}
+
+      <Stack spacing={3}>
+        <CustomTextField
+          label="Name"
+          name="name"
+          variant="outlined"
+          fullWidth
+          value={formData.name}
+          onChange={handleChange}
+        />
+
+        <CustomTextField
+          label="Email"
+          name="email"
+          type="email"
+          variant="outlined"
+          fullWidth
+          value={formData.email}
+          onChange={handleChange}
+        />
+
+        <CustomTextField
+          label="Password"
+          name="password"
+          type="password"
+          variant="outlined"
+          fullWidth
+          value={formData.password}
+          onChange={handleChange}
+        />
+
+        <Button
+          color="primary"
+          variant="contained"
+          size="large"
+          fullWidth
+          type="submit"
+        >
+          Register
+        </Button>
+      </Stack>
+
+      {error && (
+        <Typography color="error" mt={2}>
+          {error}
+        </Typography>
+      )}
+
+      {subtitle}
     </form>
   );
 };
+
 export default AuthRegister;
