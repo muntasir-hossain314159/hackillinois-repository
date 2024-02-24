@@ -3,6 +3,7 @@ import { Select, MenuItem } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 import dynamic from "next/dynamic";
+import { Numbers } from "@mui/icons-material";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -16,11 +17,36 @@ const SalesOverview = () => {
 
   // chart color
   const theme = useTheme();
-  const primary = theme.palette.primary.main;
-  const secondary = theme.palette.secondary.main;
+  const primary = theme.palette.success.main;
+  const secondary = theme.palette.warning.main;
+  const tertiary = theme.palette.error.main;
+
+  const dailyBudget: number = 100;
+
+  const dailySavings: number[] = [66, 44, 48, 49, 39, 37, 22];
+  const dailyCosts: number[] = [58, 13, 21, 45, 38, 17, 61];
+  const maxDailyBudget = Math.max(
+    ...dailySavings.map((saving, index) => saving + dailyCosts[index])
+  );
 
   // chart
-  const optionscolumnchart: any = {
+  const optionscolumnchart: ApexCharts.ApexOptions = {
+    annotations: {
+      yaxis: [
+        {
+          y: maxDailyBudget,
+          borderColor: "#FFA07A", // Lighter red color
+          label: {
+            borderColor: "#FFA07A",
+            style: {
+              color: "#fff",
+              background: "#FFA07A",
+            },
+            text: "Most Spent Day",
+          },
+        },
+      ],
+    },
     chart: {
       type: "bar",
       fontFamily: "'Plus Jakarta Sans', sans-serif;",
@@ -28,14 +54,14 @@ const SalesOverview = () => {
       toolbar: {
         show: true,
       },
-      height: 370,
+      height: 400,
       stacked: true, // Enable stacked bar chart
     },
     colors: [primary, secondary],
     plotOptions: {
       bar: {
         horizontal: false,
-        borderRadius: 4,
+        borderRadius: 0,
         dataLabels: {
           position: "top", // top, center, bottom
         },
@@ -58,14 +84,13 @@ const SalesOverview = () => {
     },
     xaxis: {
       categories: [
-        "16/08",
-        "17/08",
-        "18/08",
-        "19/08",
-        "20/08",
-        "21/08",
-        "22/08",
-        "23/08",
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
       ],
     },
     tooltip: {
@@ -74,18 +99,18 @@ const SalesOverview = () => {
   };
   const seriescolumnchart: any = [
     {
-      name: "Earnings this month",
-      data: [355, 390, 300, 350, 390, 180, 355, 390],
+      name: "Daily Savings",
+      data: dailySavings,
     },
     {
-      name: "Expense this month",
-      data: [280, 250, 325, 215, 250, 310, 280, 250],
+      name: "Daily Costs",
+      data: dailyCosts,
     },
   ];
 
   return (
     <DashboardCard
-      title="Sales Overview"
+      title="Weekly Spending"
       action={
         <Select
           labelId="month-dd"
@@ -94,9 +119,9 @@ const SalesOverview = () => {
           size="small"
           onChange={handleChange}
         >
-          <MenuItem value={1}>March 2023</MenuItem>
-          <MenuItem value={2}>April 2023</MenuItem>
-          <MenuItem value={3}>May 2023</MenuItem>
+          <MenuItem value={1}>This Week</MenuItem>
+          <MenuItem value={2}>Last Month</MenuItem>
+          <MenuItem value={3}>Last 3 Months</MenuItem>
         </Select>
       }
     >
@@ -104,7 +129,7 @@ const SalesOverview = () => {
         options={optionscolumnchart}
         series={seriescolumnchart}
         type="bar"
-        height="370px"
+        height="400px"
       />
     </DashboardCard>
   );

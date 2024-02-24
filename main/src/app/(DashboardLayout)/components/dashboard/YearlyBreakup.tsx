@@ -1,113 +1,126 @@
-
 import dynamic from "next/dynamic";
-const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
-import { useTheme } from '@mui/material/styles';
-import { Grid, Stack, Typography, Avatar } from '@mui/material';
-import { IconArrowUpLeft } from '@tabler/icons-react';
+import { useTheme } from "@mui/material/styles";
+import { Grid, Typography, Box } from "@mui/material";
 
-import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 
 const YearlyBreakup = () => {
-  // chart color
   const theme = useTheme();
-  const primary = theme.palette.primary.main;
-  const primarylight = '#ecf2ff';
-  const successlight = theme.palette.success.light;
 
-  // chart
-  const optionscolumnchart: any = {
+  const categories: (keyof typeof categoryColors)[] = [
+    "Grocery shopping",
+    "Gasoline",
+    "Utility bill",
+    "Restaurant",
+    "Online purchase",
+    "Clothing",
+    "Entertainment",
+  ];
+
+  const categoryColors: { [key: string]: string } = {
+    "Grocery shopping": "#FFA07A", // Light Salmon
+    "Gasoline": "#FFD700", // Gold
+    "Utility bill": "#87CEEB", // Sky Blue
+    "Restaurant": "#32CD32", // Lime Green
+    "Online purchase": "#BA55D3", // Medium Orchid
+    "Clothing": "#FF4500", // Orange Red
+    "Entertainment": "#20B2AA", // Light Sea Green
+  };
+
+  const seriesData = [120, 80, 70, 90, 100, 60, 50]; // Replace with actual data
+
+  const options: ApexCharts.ApexOptions = {
     chart: {
-      type: 'donut',
+      type: "donut",
       fontFamily: "'Plus Jakarta Sans', sans-serif;",
-      foreColor: '#adb0bb',
+      foreColor: "#adb0bb",
       toolbar: {
         show: false,
       },
-      height: 155,
     },
-    colors: [primary, primarylight, '#F9F9FD'],
+    labels: categories.map((category) => category.toString()),
+    legend: {
+      show: true,
+      offsetY: 0,
+      position: "right", // Adjust the legend position if necessary
+      fontSize: "14px", // Adjust font size for better readability
+      formatter: function (
+        seriesName: string,
+        opts: {
+          w: { globals: { series: { [x: string]: string } } };
+          seriesIndex: string | number;
+        }
+      ) {
+        return seriesName + ": $" + opts.w.globals.series[opts.seriesIndex];
+      },
+    },
     plotOptions: {
       pie: {
-        startAngle: 0,
-        endAngle: 360,
         donut: {
-          size: '75%',
-          background: 'transparent',
+          size: "75%",
+          labels: {
+            show: true,
+            name: {
+              show: false,
+              fontSize: "16px",
+              fontFamily: "Helvetica, Arial, sans-serif",
+              fontWeight: 600,
+              color: "#373d3f",
+              offsetY: -10,
+              formatter: function (val: any) {
+                return val;
+              },
+            },
+            value: {
+              show: false,
+            },
+            total: {
+              show: false,
+            },
+          },
         },
       },
     },
-    tooltip: {
-      theme: theme.palette.mode === 'dark' ? 'dark' : 'light',
-      fillSeriesColor: false,
-    },
-    stroke: {
-      show: false,
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    legend: {
-      show: false,
-    },
     responsive: [
       {
-        breakpoint: 991,
+        breakpoint: 480,
         options: {
-          chart: {
-            width: 120,
+          legend: {
+            position: "bottom",
           },
         },
       },
     ],
+    colors: categories.map((category) => categoryColors[category]),
+
+    dataLabels: {
+      enabled: false, // Disable data labels to avoid clutter
+    },
+    tooltip: {
+      y: {
+        formatter: function (val: number) {
+          return "$" + val; // Format tooltip value as currency
+        },
+      },
+    },
   };
-  const seriescolumnchart: any = [38, 40, 25];
 
   return (
     <DashboardCard title="Yearly Breakup">
       <Grid container spacing={3}>
-        {/* column */}
-        <Grid item xs={7} sm={7}>
-          <Typography variant="h3" fontWeight="700">
-            $36,358
-          </Typography>
-          <Stack direction="row" spacing={1} mt={1} alignItems="center">
-            <Avatar sx={{ bgcolor: successlight, width: 27, height: 27 }}>
-              <IconArrowUpLeft width={20} color="#39B69A" />
-            </Avatar>
-            <Typography variant="subtitle2" fontWeight="600">
-              +9%
-            </Typography>
-            <Typography variant="subtitle2" color="textSecondary">
-              last year
-            </Typography>
-          </Stack>
-          <Stack spacing={3} mt={5} direction="row">
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Avatar
-                sx={{ width: 9, height: 9, bgcolor: primary, svg: { display: 'none' } }}
-              ></Avatar>
-              <Typography variant="subtitle2" color="textSecondary">
-                2022
-              </Typography>
-            </Stack>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Avatar
-                sx={{ width: 9, height: 9, bgcolor: primarylight, svg: { display: 'none' } }}
-              ></Avatar>
-              <Typography variant="subtitle2" color="textSecondary">
-                2023
-              </Typography>
-            </Stack>
-          </Stack>
-        </Grid>
-        {/* column */}
-        <Grid item xs={5} sm={5}>
-          <Chart
-            options={optionscolumnchart}
-            series={seriescolumnchart}
-            type="donut"
-            height="150px"
-          />
+        <Grid item xs={12}>
+          <Box sx={{ textAlign: "center" }}>
+            <Chart
+              options={{
+                ...options,
+                chart: { ...options.chart, type: "donut" },
+              }}
+              series={seriesData}
+              type="donut"
+              height={200}
+            />
+          </Box>
         </Grid>
       </Grid>
     </DashboardCard>
