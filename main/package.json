@@ -1,14 +1,16 @@
 {
   "name": "hackillinois-2024",
   "version": "0.1.0",
-  "description": "Recipe recommender",
+  "description": "HackIllinois 2024 Project",
   "main": "server.js",
   "private": true,
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "start": "node backend/server.js",
+    "server": "nodemon backend/server.js",
+    "client": "next dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "dependencies": {
     "@emotion/cache": "latest",
@@ -32,11 +34,11 @@
     "eslint-config-next": "13.4.3",
     "express": "^4.17.2",
     "express-async-handler": "^1.2.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "mongodb": "^6.3.0",
     "mongoose": "^6.1.9",
-    "next": "13.4.3",
+    "next": "^13.5.6",
     "numpy": "^0.0.1",
     "openai": "^4.24.2",
     "pandas": "^0.0.3",
