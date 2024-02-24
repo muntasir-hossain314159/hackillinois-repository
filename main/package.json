@@ -1,6 +1,8 @@
 {
   "name": "hackillinois-2024",
   "version": "0.1.0",
+  "description": "Recipe recommender",
+  "main": "server.js",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -16,6 +18,7 @@
     "@mui/icons-material": "latest",
     "@mui/lab": "^5.0.0-alpha.117",
     "@mui/material": "latest",
+    "@reduxjs/toolkit": "^2.2.1",
     "@tabler/icons-react": "^2.1.1",
     "@types/node": "20.2.3",
     "@types/react": "18.2.6",
@@ -31,6 +34,7 @@
     "express-async-handler": "^1.2.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
+    "mongodb": "^6.3.0",
     "mongoose": "^6.1.9",
     "next": "13.4.3",
     "numpy": "^0.0.1",
