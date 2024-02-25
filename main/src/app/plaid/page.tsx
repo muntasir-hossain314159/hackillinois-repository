@@ -6,6 +6,8 @@
 import React, { useEffect, useState } from "react";
 import { usePlaidLink } from "react-plaid-link";
 import Button from "plaid-threads/Button";
+import { useRouter } from 'next/navigation'
+
 
 const Plaid = () => {
   const [linkToken, setLinkToken] = useState(null);
@@ -28,6 +30,7 @@ interface LinkProps {
   linkToken: string | null;
 }
 const Link: React.FC<LinkProps> = (props: LinkProps) => {
+  const router = useRouter();
   const onSuccess = React.useCallback((public_token: any, metadata: any) => {
     // send public_token to server
     const response = fetch("/api/set_access_token", {
@@ -36,6 +39,13 @@ const Link: React.FC<LinkProps> = (props: LinkProps) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ public_token }),
+    })
+    .then(() => {
+      router.push("/");
+    })
+    .catch((error) => {
+      // Handle any errors during the fetch or parsing of the response
+      console.error('Error:', error.message);
     });
     // Handle response ...
   }, []);
@@ -46,7 +56,7 @@ const Link: React.FC<LinkProps> = (props: LinkProps) => {
   const { open, ready } = usePlaidLink(config);
   return (
     <Button type="button" large onClick={() => open()} disabled={!ready}>
-      Generate My Budget
+      Link My Account
     </Button>
   );
 };

@@ -1,42 +1,3 @@
-// const path = require("path");
-// const express = require("express");
-// const colors = require("colors");
-// const dotenv = require("dotenv").config();
-// const { errorHandler } = require("./backend/middleware/errorMiddleware");
-// const port = 8000;
-// const cors = require('cors');
-
-// const router = require("./backend/routes/plaidRoutes");
-
-
-// const app = express();
-
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
-// app.use(cors);
-
-// //app.use("/api/users", require("./backend/routes/userRoutes"));
-// app.use("/", router);
-
-
-// Serve frontend
-// if (process.env.NODE_ENV === "production") {
-//   app.use(express.static(path.join(__dirname, "../frontend/build")));
-
-//   app.get("*", (req, res) =>
-//     res.sendFile(
-//       path.resolve(__dirname, "../", "frontend", "build", "index.html")
-//     )
-//   );
-// } else {
-//   app.get("/", (req, res) => res.send("Please set to production"));
-// }
-
-// app.use(errorHandler);
-
-// app.listen(port, () => console.log(`Server started on port ${port}`));
-
-
 'use strict';
 
 // read env vars from .env file
@@ -274,41 +235,40 @@ app.get('/api/auth', function (request, response, next) {
 // Retrieve Transactions for an Item
 // https://plaid.com/docs/#transactions
 app.get('/api/transactions', function (request, response, next) {
-  Promise.resolve()
-    .then(async function () {
-      // Set cursor to empty to receive all historical updates
-      let cursor = null;
+    Promise.resolve()
+      .then(async function () {
+        // Set cursor to empty to receive all historical updates
+        let cursor = null;
+  
+        // New transaction updates since "cursor"
+        let added = [];
+        let modified = [];
+        // Removed transaction ids
+        let removed = [];
+        let hasMore = true;
+        // Iterate through each page of new transaction updates for item
+        while (hasMore) {
+          const request = {
+            access_token: ACCESS_TOKEN,
+            cursor: cursor,
+            count: 50,
+          };
+          const response = await client.transactionsSync(request)
+          const data = response.data;
+          // Add this page of results
+          added = added.concat(data.added);
+          modified = modified.concat(data.modified);
+          removed = removed.concat(data.removed);
+          hasMore = data.has_more;
+          // Update cursor to the next cursor
+          cursor = data.next_cursor;
+          console.log("Printing Response");
+          prettyPrintResponse(response);
+        }
 
-      // New transaction updates since "cursor"
-      let added = [];
-      let modified = [];
-      // Removed transaction ids
-      let removed = [];
-      let hasMore = true;
-      // Iterate through each page of new transaction updates for item
-      while (hasMore) {
-        const request = {
-          access_token: ACCESS_TOKEN,
-          cursor: cursor,
-        };
-        const response = await client.transactionsSync(request)
-        const data = response.data;
-        // Add this page of results
-        added = added.concat(data.added);
-        modified = modified.concat(data.modified);
-        removed = removed.concat(data.removed);
-        hasMore = data.has_more;
-        // Update cursor to the next cursor
-        cursor = data.next_cursor;
-        prettyPrintResponse(response);
-      }
-
-      const compareTxnsByDateAscending = (a, b) => (a.date > b.date) - (a.date < b.date);
-      // Return the 8 most recent transactions
-      const recently_added = [...added].sort(compareTxnsByDateAscending).slice(-8);
-      response.json({latest_transactions: recently_added});
-    })
-    .catch(next);
+        response.json({latest_transactions: added});
+      })
+      .catch(next);
 });
 
 // Retrieve Investment Transactions for an Item
@@ -572,6 +532,59 @@ app.get('/api/transfer_create', function (request, response, next) {
     })
     .catch(next);
 });
+
+app.get('/api/yearly_breakup', function(request, response, next) {
+    Promise.resolve()
+    .then(async() => {
+        let cursor = null;
+
+        // New transaction updates since "cursor"
+        let added = [];
+        let modified = [];
+        // Removed transaction ids
+        let removed = [];
+        let hasMore = true;
+        // Iterate through each page of new transaction updates for item
+        while (hasMore) {
+          const request = {
+            access_token: ACCESS_TOKEN,
+            cursor: cursor,
+            count: 100,
+          };
+          const response = await client.transactionsSync(request)
+          const data = response.data;
+          // Add this page of results
+          added = added.concat(data.added);
+          modified = modified.concat(data.modified);
+          removed = removed.concat(data.removed);
+          hasMore = data.has_more;
+          // Update cursor to the next cursor
+          cursor = data.next_cursor;
+          console.log("Printing Response");
+          prettyPrintResponse(response);
+        }
+  
+        let expensesByCategory = analyzeTransactions(added);
+        response.json({expenses_by_category: expensesByCategory});
+      })
+      .catch(next);
+    })
+
+  function analyzeTransactions(transactions) {
+    // Example analysis: Sum expenses by category
+    const expensesByCategory = transactions.reduce((acc, transaction) => {
+      const category = transaction.personal_finance_category.primary;
+      const amount = transaction.amount;
+      if (!acc[category]) {
+        acc[category] = 0;
+      }
+      acc[category] += amount;
+      return acc;
+    }, {});
+  
+    console.log('Expenses by Category:', expensesByCategory);
+    return expensesByCategory;
+  }
 
 // This is a helper function to poll for the completion of an Asset Report and
 // then send it in the response to the client. Alternatively, you can provide a
