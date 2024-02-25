@@ -1,23 +1,27 @@
-// app/api/gpt-call.ts
-import { NextApiRequest, NextApiResponse } from 'next';
+// import { OpenAI } from "openai";
+// import * as dotenv from "dotenv";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  try {
-    const response = await fetch('https://example.com/api/turbo/3.5', {
-      method: 'GET', // or 'POST'
-      headers: {
-        'Content-Type': 'application/json',
-        // Additional headers
-      },
-    });
+// dotenv.config();
 
-    if (!response.ok) {
-      throw new Error(`Error: ${response.status}`);
-    }
+// const openaiKey = process.env.OPENAI_API_KEY as string;
+// const openai = new OpenAI({
+//   apiKey: openaiKey,
+//   dangerouslyAllowBrowser: true,
+// }); 
 
-    const data = await response.json();
-    res.status(200).json(data);
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
-  }
-}
+// export const generateResponse = async (prompt: string): Promise<string> => {
+//   try {
+//     const modelId = "gpt-3.5-turbo-instruct"; // Adjust model ID as needed
+
+//     const result = await openai.completions.create({
+//       model: modelId,
+//       prompt: prompt,
+//       max_tokens: 500,
+//     });
+
+//     return result.choices[0].text;
+//   } catch (err) {
+//     console.error(err);
+//     return "";
+//   }
+// };

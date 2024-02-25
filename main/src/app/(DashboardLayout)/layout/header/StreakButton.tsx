@@ -8,14 +8,38 @@ import Box from '@mui/material/Box';
 
 interface StreakButtonProps {
   streakDays: number;
+  // startDate: Date,
+  // currDate: Date;
   // Additional props for each day's completion status can be added here
 }
 
-const StreakButton: React.FC<StreakButtonProps> = ({ streakDays }) => {
+const defaultProps: Props = {
+  streakDays: 0,
+  startDate: new Date(),
+  currDate: new Date(),
+}
+const StreakButton: React.FC<StreakButtonProps> = ({ streakDays, currDate, startDate }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [state, setState] = useState<StreakButton>({ streakDays: 0 });
+
+  const streakIncrement = () => {
+    // streakDays++;
+    setState(prevState => ({
+      ...prevState,
+      streakDays: prevState.streakDays + 1
+    }));
+  };
+
+  const streakReset = () => {
+    setState(prevState => ({
+      ...prevState,
+      streakDays: 0
+    }));
+  };
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
+    // streakIncrement();
   };
 
   const handleClose = () => {
@@ -24,7 +48,6 @@ const StreakButton: React.FC<StreakButtonProps> = ({ streakDays }) => {
 
   const open = Boolean(anchorEl);
   const id = open ? 'streak-popover' : undefined;
-  streakDays = 3;
 
   return (
     <div>
@@ -35,7 +58,7 @@ const StreakButton: React.FC<StreakButtonProps> = ({ streakDays }) => {
         startIcon={<FireIcon />}
         onClick={handleClick}
       >
-        {`${streakDays} days`}
+        {`${streakDays} day${streakDays != 1 ? "s" : ""}`}
       </Button>
       <Popover
         id={id}
@@ -74,5 +97,7 @@ const StreakButton: React.FC<StreakButtonProps> = ({ streakDays }) => {
     </div>
   );
 };
+
+StreakButton.defaultProps = defaultProps;
 
 export default StreakButton;

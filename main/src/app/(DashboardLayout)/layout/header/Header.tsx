@@ -68,7 +68,7 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
         </IconButton>
         <Box flexGrow={1} />
         <Stack spacing={1} direction="row" alignItems="center">
-          <StreakButton />
+          <StreakButton/>
           <Profile />
         </Stack>
       </ToolbarStyled>

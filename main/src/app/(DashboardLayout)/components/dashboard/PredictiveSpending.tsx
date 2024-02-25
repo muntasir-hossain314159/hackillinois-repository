@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Select, MenuItem, useTheme } from "@mui/material";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 import dynamic from "next/dynamic";
-import dotenv from "dotenv";
-import { OpenAI } from "openai";
+//import { generateResponse } from '@/app/(DashboardLayout)/API/gpt-call.ts';
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -18,15 +17,11 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 const PredictiveSpending = () => {
   const [data, setData] = useState({ savings: [], costs: [] });
 
-  useEffect(() => {
-    // Replace with the actual API call
-    fetch("/api/predictive-data")
-      .then((response) => response.json())
-      .then((data) => {
-        // Assuming the API returns an object with 'savings' and 'costs' arrays
-        setData({ savings: data.savings, costs: data.costs });
-      });
-  }, []);
+//   useEffect(() => {
+//     const prompt = "Describe the importance of AI in modern software development.";
+//     //const response = generateResponse(prompt);
+//     //console.log(response);
+// }, []);
 
   // select
   const [timePeriod, setTimePeriod] = React.useState("1");
