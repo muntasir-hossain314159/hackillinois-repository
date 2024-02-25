@@ -27,7 +27,7 @@ function Dashboard() {
     setBudgetPlanDialogOpen(false);
   };
   return (
-    <PageContainer title="Dashboard" description="this is Dashboard">
+    <PageContainer title="Day2Day" description="this is Dashboard">
       <Box>
         <Grid container spacing={3}>
           <Grid item xs={12} lg={6}>

@@ -85,14 +85,14 @@ const SalesOverview = () => {
   let dailyCosts: number[];
   let maxDailyBudget: number;
 
-  if(predictedTransactions !== "") {
-    let obj: budgetObject = JSON.parse(predictedTransactions);
-    dailySavings = obj.daily_costs //[10, 10, 10, 10, 10, 10, 10];
-    dailyCosts = obj.daily_savings //[58, 13, 21, 45, 38, 17, 61];
-    maxDailyBudget = Math.max(
-      ...dailySavings.map((saving, index) => saving + dailyCosts[index])
-    );
-  } else {
+    try {
+      let obj: budgetObject = JSON.parse(predictedTransactions);
+      dailySavings = obj.daily_costs //[10, 10, 10, 10, 10, 10, 10];
+      dailyCosts = obj.daily_savings //[58, 13, 21, 45, 38, 17, 61];
+      maxDailyBudget = Math.max(
+        ...dailySavings.map((saving, index) => saving + dailyCosts[index])
+      );
+  } catch(error) {
     dailySavings = [10, 10, 10, 10, 10, 10, 10];
     dailyCosts = [58, 13, 21, 45, 38, 17, 61];
     maxDailyBudget = Math.max(
@@ -127,7 +127,7 @@ const SalesOverview = () => {
       toolbar: {
         show: true,
       },
-      height: 400,
+      height: 425,
       stacked: true, // Enable stacked bar chart
     },
     colors: [primary, secondary],
@@ -206,7 +206,7 @@ const SalesOverview = () => {
         options={optionscolumnchart}
         series={seriescolumnchart}
         type="bar"
-        height="415px"
+        height="440px"
       />
     </DashboardCard>
   );
