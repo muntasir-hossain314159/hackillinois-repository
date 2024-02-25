@@ -1,46 +1,102 @@
-import React from 'react';
-import { Box, Typography, Button } from '@mui/material';
-import Link  from 'next/link';
+import React, { useState } from "react";
+import { Box, Typography, Button, Stack } from "@mui/material";
+import CustomTextField from "@/app/(DashboardLayout)/components/forms/theme-elements/CustomTextField";
+import authService from "../auth1/authService";
 
-import CustomTextField from '@/app/(DashboardLayout)/components/forms/theme-elements/CustomTextField';
-import { Stack } from '@mui/system';
+interface AuthProps {
+  title?: string;
+  subtitle?: React.ReactNode;
+  subtext?: React.ReactNode;
+}
 
-interface registerType {
-    title?: string;
-    subtitle?: JSX.Element | JSX.Element[];
-    subtext?: JSX.Element | JSX.Element[];
-  }
+const AuthRegister: React.FC<AuthProps> = ({ title, subtitle, subtext }) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const [error, setError] = useState<string | null>(null);
 
-const AuthRegister = ({ title, subtitle, subtext }: registerType) => (
-    <>
-        {title ? (
-            <Typography fontWeight="700" variant="h2" mb={1}>
-                {title}
-            </Typography>
-        ) : null}
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-        {subtext}
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const data = await authService.register(formData);
+      if (data) {
+        window.location.href = "/authentication/login";
+      }
+    } catch (err: any) {
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "An error occurred during registration"
+      );
+    }
+  };
 
-        <Box>
-            <Stack mb={3}>
-                <Typography variant="subtitle1"
-                    fontWeight={600} component="label" htmlFor='name' mb="5px">Name</Typography>
-                <CustomTextField id="name" variant="outlined" fullWidth />
+  return (
+    <form onSubmit={handleSubmit}>
+      {title && (
+        <Typography fontWeight="700" variant="h2" mb={1}>
+          {title}
+        </Typography>
+      )}
 
-                <Typography variant="subtitle1"
-                    fontWeight={600} component="label" htmlFor='email' mb="5px" mt="25px">Email Address</Typography>
-                <CustomTextField id="email" variant="outlined" fullWidth />
+      {subtext}
 
-                <Typography variant="subtitle1"
-                    fontWeight={600} component="label" htmlFor='password' mb="5px" mt="25px">Password</Typography>
-                <CustomTextField id="password" variant="outlined" fullWidth />
-            </Stack>
-            <Button color="primary" variant="contained" size="large" fullWidth component={Link} href="/authentication/login">
-                Sign Up
-            </Button>
-        </Box>
-        {subtitle}
-    </>
-);
+      <Stack spacing={3}>
+        <CustomTextField
+          label="Name"
+          name="name"
+          variant="outlined"
+          fullWidth
+          value={formData.name}
+          onChange={handleChange}
+        />
+
+        <CustomTextField
+          label="Email"
+          name="email"
+          type="email"
+          variant="outlined"
+          fullWidth
+          value={formData.email}
+          onChange={handleChange}
+        />
+
+        <CustomTextField
+          label="Password"
+          name="password"
+          type="password"
+          variant="outlined"
+          fullWidth
+          value={formData.password}
+          onChange={handleChange}
+        />
+
+        <Button
+          color="primary"
+          variant="contained"
+          size="large"
+          fullWidth
+          type="submit"
+        >
+          Register
+        </Button>
+      </Stack>
+
+      {error && (
+        <Typography color="error" mt={2}>
+          {error}
+        </Typography>
+      )}
+
+      {subtitle}
+    </form>
+  );
+};
 
 export default AuthRegister;
