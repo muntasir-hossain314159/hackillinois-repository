@@ -52,13 +52,7 @@ function Dashboard() {
               <Grid item xs={12}>
                 <PieChart />
               </Grid>
-              <Grid item xs={12} lg={12}>
-                <PredictiveSpending />
-              </Grid>
             </Grid>
-          </Grid>
-          <Grid item xs={12} lg={6}>
-            {/* <ExpenseChart /> */}
           </Grid>
         </Grid>
       </Box>
