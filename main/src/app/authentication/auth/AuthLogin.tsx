@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import CustomTextField from "@/app/(DashboardLayout)/components/forms/theme-elements/CustomTextField";
+import { useRouter } from "next/navigation"; // Ensure this import is at the top
 import authService from "../auth1/authService";
 
 interface LoginType {
@@ -21,6 +22,7 @@ interface LoginType {
 const AuthLogin = ({ title, subtitle, subtext }: LoginType) => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
@@ -36,10 +38,10 @@ const AuthLogin = ({ title, subtitle, subtext }: LoginType) => {
 
     try {
       const data = await authService.login(formData);
-      if (data && data.user) {
-        // Assuming 'data.user' indicates a successful login
+      if (data || data.user) {
+        // Check if the user is logged in ***
         console.log("Login successful", data);
-        // Redirect the user or update UI state here
+        router.push("/plaid"); // Redirect to the Plaid page on successful login
       } else {
         // Handle login failure
         setError("Login failed. Please check your credentials.");
@@ -126,7 +128,6 @@ const AuthLogin = ({ title, subtitle, subtext }: LoginType) => {
           color="primary"
           variant="contained"
           size="large"
-          href="/plaid"
           fullWidth
           type="submit"
         >
