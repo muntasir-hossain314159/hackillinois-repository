@@ -43,7 +43,7 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
     justifyContent: "center",
     backdropFilter: "blur(4px)",
     [theme.breakpoints.up("lg")]: {
-      minHeight: "70px",
+      minHeight: "25px",
     },
   }));
   const ToolbarStyled = styled(Toolbar)(({ theme }) => ({

@@ -23,6 +23,9 @@ const SalesOverview = () => {
   const [predictedTransactions, setPredictedTransactions] = useState("");
   const [saving, setSavings] = useState(100);
   const [retryCount, setRetryCount] = useState(0);
+  const [dailySavings, setDailySavings] = useState<number[]>([]);
+  const [dailyCosts, setDailyCosts] = useState<number[]>([]);
+  const [maxDailyBudget, setMaxDailyBudget] = useState(0);
 
   const handleChange = (event: any) => {
     setMonth(event.target.value);
@@ -31,6 +34,33 @@ const SalesOverview = () => {
   useEffect(() => {
       fetchData();
   }, [retryCount, saving]);
+
+  
+  interface budgetObject {
+    daily_costs: number[];
+    daily_savings: number[];
+  }
+
+  // let dailySavings: number[] ;
+  // let dailyCosts: number[];
+  // let maxDailyBudget: number;
+
+  // try {
+  //   let obj: budgetObject = JSON.parse(predictedTransactions);
+  //   dailySavings = obj.daily_costs //[10, 10, 10, 10, 10, 10, 10];
+  //   dailyCosts = obj.daily_savings //[58, 13, 21, 45, 38, 17, 61];
+  //   maxDailyBudget = Math.max(
+  //     ...dailySavings.map((saving, index) => saving + dailyCosts[index])
+  //   );
+  // } catch(error) {
+  //   dailySavings = [10, 10, 10, 10, 10, 10, 10];
+  //   dailyCosts = [58, 13, 21, 45, 38, 17, 61];
+  //   maxDailyBudget = Math.max(
+  //     ...dailySavings.map((saving, index) => saving + dailyCosts[index])
+  //   );
+  //   setRetryCount(retryCount + 1);
+  // }
+
 
   const fetchData = async () => {
     try {
@@ -41,6 +71,12 @@ const SalesOverview = () => {
       console.log(`Saving: ${saving}`);
       const gptResponse = await generateResponse(formattedData, saving);
       console.log(`CHAT GPT ${gptResponse}`);
+      let obj: budgetObject = JSON.parse(gptResponse);
+      setDailyCosts(obj.daily_costs); //[10, 10, 10, 10, 10, 10, 10];
+      setDailySavings(obj.daily_savings); //[58, 13, 21, 45, 38, 17, 61];
+      setMaxDailyBudget(Math.max(
+        ...dailySavings.map((saving, index) => saving + dailyCosts[index])
+      ));
       setPredictedTransactions(gptResponse);
       setLoading(false);
     } catch (error) {
@@ -48,6 +84,9 @@ const SalesOverview = () => {
       setRetryCount(retryCount + 1);
     }
   };
+
+
+
 
   function formatData(transactions: any[]): string {
     const formattedData: any[] = [];
@@ -68,7 +107,7 @@ const SalesOverview = () => {
     const jsonString = JSON.stringify(formattedData);
 
     return jsonString;
-}
+  }
 
 //get current date
 //get transactions again
@@ -81,33 +120,9 @@ const SalesOverview = () => {
   const secondary = theme.palette.warning.main;
   const tertiary = theme.palette.error.main;
 
-  const dailyBudget: number = 100;
+  //const dailyBudget: number = 100;
 
-  interface budgetObject {
-    daily_costs: number[];
-    daily_savings: number[];
-}
-
-  let dailySavings: number[] ;
-  let dailyCosts: number[];
-  let maxDailyBudget: number;
-
-    try {
-      let obj: budgetObject = JSON.parse(predictedTransactions);
-      dailySavings = obj.daily_costs //[10, 10, 10, 10, 10, 10, 10];
-      dailyCosts = obj.daily_savings //[58, 13, 21, 45, 38, 17, 61];
-      maxDailyBudget = Math.max(
-        ...dailySavings.map((saving, index) => saving + dailyCosts[index])
-      );
-  } catch(error) {
-    dailySavings = [10, 10, 10, 10, 10, 10, 10];
-    dailyCosts = [58, 13, 21, 45, 38, 17, 61];
-    maxDailyBudget = Math.max(
-      ...dailySavings.map((saving, index) => saving + dailyCosts[index])
-    );
-  }
-
-
+  
 
   // chart
   const optionscolumnchart: ApexCharts.ApexOptions = {
