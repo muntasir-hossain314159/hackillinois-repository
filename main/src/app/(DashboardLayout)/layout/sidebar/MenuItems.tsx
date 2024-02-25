@@ -5,6 +5,7 @@ import {
   IconLogin,
   IconMoodHappy,
   IconTypography,
+  IconWand,
   IconUserPlus,
 } from "@tabler/icons-react";
 
@@ -53,6 +54,16 @@ const Menuitems = [
     title: "Register",
     icon: IconUserPlus,
     href: "/authentication/register",
+  },
+  {
+    navlabel: true,
+    subheader: "Predict",
+  },
+  {
+    id: uniqueId(),
+    title: "Predictive Analysis",
+    icon: IconWand,
+    href: "/components/predict",
   },
   // {
   //   navlabel: true,
