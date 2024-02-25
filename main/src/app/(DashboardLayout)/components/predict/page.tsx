@@ -1,131 +1,104 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Select, MenuItem, useTheme } from "@mui/material";
-import dynamic from "next/dynamic";
-import { NextPage } from "next";
-import Head from "next/head";
-import { ApexOptions } from "apexcharts";
-
+import { Select, MenuItem } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
+import dynamic from "next/dynamic";
+import { generateResponse } from "./git-call";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-const PredictiveSpending: NextPage = () => {
-  const [data, setData] = useState({ savings: [], costs: [] });
+const PredictiveSpending = () => {
+  const [month, setMonth] = useState("1");
+  const [loading, setLoading] = useState(true);
+  const [savingGoal, setSavingGoal] = useState(100);
+
+  const [chartData, setChartData] = useState({
+    predicted_daily_savings: [],
+    predicted_daily_costs: [],
+  });
 
   useEffect(() => {
-    fetch("/api/predictive-data")
-      .then((response) => response.json())
-      .then((data) => {
-        setData({ savings: data.savings, costs: data.costs });
-      });
-  }, []);
+    fetchData();
+  }, [month, savingGoal]);
 
-  const [timePeriod, setTimePeriod] = React.useState("1");
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setTimePeriod(event.target.value as string);
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("/api/transactions");
+      if (!response.ok) throw new Error("Failed to fetch transactions");
+      const transactions = await response.json();
+
+      const formattedData = JSON.stringify(transactions);
+      const gptResponse = await generateResponse(formattedData, savingGoal);
+      const { predicted_daily_savings, predicted_daily_costs } =
+        JSON.parse(gptResponse);
+      console.log(`GPT Response: ${gptResponse}`);
+      setChartData({ predicted_daily_savings, predicted_daily_costs });
+    } catch (error) {
+      console.error("Error fetching data or generating response:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (event) => {
+    setMonth(event.target.value);
   };
 
   const theme = useTheme();
-  const colors = [
-    "#FFA07A",
-    "#FFD700",
-    "#87CEEB",
-    "#32CD32",
-    "#BA55D3",
-    "#FF4500",
-    "#20B2AA",
-  ];
-
-  const options: ApexOptions = {
+  const options = {
     chart: {
       type: "bar",
-      fontFamily: "'Plus Jakarta Sans', sans-serif",
-      foreColor: theme.palette.text.secondary,
-      toolbar: {
-        show: true,
-      },
-      height: 350,
       stacked: true,
     },
-    colors: colors,
     plotOptions: {
       bar: {
         horizontal: false,
-        borderRadius: 4,
       },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    legend: {
-      show: true,
-      position: "right",
-      fontSize: "16px",
-      markers: {
-        width: 16,
-        height: 16,
-      },
-    },
-    grid: {
-      borderColor: theme.palette.divider,
-      strokeDashArray: 3,
-    },
-    yaxis: {
-      tickAmount: 4,
     },
     xaxis: {
-      categories: [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-      ],
+      categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    },
+    colors: [theme.palette.success.main, theme.palette.error.main],
+    legend: {
+      position: "top",
     },
     tooltip: {
-      theme: "light",
+      shared: true,
+      intersect: false,
     },
   };
 
   const series = [
     {
-      name: "Predicted Savings",
-      data: data.savings,
+      name: "Predicted Daily Savings",
+      data: chartData.predicted_daily_savings,
     },
     {
-      name: "Predicted Costs",
-      data: data.costs,
+      name: "Predicted Daily Costs",
+      data: chartData.predicted_daily_costs,
     },
   ];
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <>
-      <Head>
-        <title>Predictive Spending</title>
-        <meta name="description" content="Predictive Spending Analysis" />
-      </Head>
-      <DashboardCard
-        title="Predictive Spending"
-        action={
-          <Select
-            labelId="timeperiod-select-label"
-            id="timeperiod-select"
-            value={timePeriod}
-            onChange={handleChange}
-          >
-            <MenuItem value="1">Next Week</MenuItem>
-            <MenuItem value="2">Next Month</MenuItem>
-            <MenuItem value="3">Next Year</MenuItem>
-          </Select>
-        }
-      >
-        <Chart options={options} series={series} type="bar" height="350" />
-      </DashboardCard>
-    </>
+    <DashboardCard
+      title="Predictive Spending Analysis"
+      action={
+        <Select value={month} onChange={handleChange} size="small">
+          <MenuItem value="1">This Week</MenuItem>
+          <MenuItem value="2">This Month</MenuItem>
+          <MenuItem value="3">This Year</MenuItem>
+        </Select>
+      }
+    >
+      <Chart options={options} series={series} type="bar" height="415px" />
+    </DashboardCard>
   );
 };
 
