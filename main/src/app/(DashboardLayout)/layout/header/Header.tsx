@@ -13,7 +13,7 @@ import PropTypes from "prop-types";
 
 // components
 import Profile from "./Profile";
-import StreakButton from "./StreakButton"
+import StreakButton from "./StreakButton";
 import { IconBellRinging, IconMenu } from "@tabler/icons-react";
 
 interface ItemType {
@@ -62,9 +62,9 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
           aria-controls="msgs-menu"
           aria-haspopup="true"
         >
-          <Badge variant="dot" color="primary">
+          {/* <Badge variant="dot" color="primary">   // Notification icon can add later if needed
             <IconBellRinging size="21" stroke="1.5" />
-          </Badge>
+          </Badge> */}
         </IconButton>
         <Box flexGrow={1} />
         <Stack spacing={1} direction="row" alignItems="center">
