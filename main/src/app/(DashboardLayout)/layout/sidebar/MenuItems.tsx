@@ -41,6 +41,16 @@ const Menuitems = [
   // },
   {
     navlabel: true,
+    subheader: "Predict",
+  },
+  {
+    id: uniqueId(),
+    title: "Predictive Analysis",
+    icon: IconWand,
+    href: "/components/predict",
+  },
+  {
+    navlabel: true,
     subheader: "Auth",
   },
   {
@@ -55,16 +65,7 @@ const Menuitems = [
     icon: IconUserPlus,
     href: "/authentication/register",
   },
-  {
-    navlabel: true,
-    subheader: "Predict",
-  },
-  {
-    id: uniqueId(),
-    title: "Predictive Analysis",
-    icon: IconWand,
-    href: "/components/predict",
-  },
+
   // {
   //   navlabel: true,
   //   subheader: "Extra",
