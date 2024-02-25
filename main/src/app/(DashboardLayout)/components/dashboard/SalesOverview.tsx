@@ -7,6 +7,12 @@ import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCa
 import dynamic from "next/dynamic";
 import { Numbers } from "@mui/icons-material";
 import { generateResponse } from "../../API/gpt-call";
+import {
+  Box,
+  Button,
+} from "@mui/material";
+import { BudgetPlanDialog } from "./BudgetPlanDialog";
+
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -24,7 +30,7 @@ const SalesOverview = () => {
 
   useEffect(() => {
       fetchData();
-  }, [retryCount]);
+  }, [retryCount, saving]);
 
   const fetchData = async () => {
     try {
@@ -32,6 +38,7 @@ const SalesOverview = () => {
       const data = await response.json();
       console.log(data);
       const formattedData: string = formatData(data.transactions);
+      console.log(`Saving: ${saving}`);
       const gptResponse = await generateResponse(formattedData, saving);
       console.log(`CHAT GPT ${gptResponse}`);
       setPredictedTransactions(gptResponse);
@@ -181,34 +188,72 @@ const SalesOverview = () => {
     },
   ];
 
+  // State to control the opening of the budget plan dialog
+  const [isBudgetPlanDialogOpen, setBudgetPlanDialogOpen] = useState(false);
+
+  // Function to open the dialog
+  const handleOpenBudgetPlanDialog = () => {
+    setBudgetPlanDialogOpen(true);
+    
+  };
+
+  // Function to close the dialog
+  const handleCloseBudgetPlanDialog = () => {
+    setBudgetPlanDialogOpen(false);
+  };
+
+  function updateSaving(amount: number) {
+    setSavings(amount);
+  }
+
   if (loading) {
     return <h1>Loading...</h1>;
   }
 
   return (
-    <DashboardCard
-      title="Weekly Spending"
-      action={
-        <Select
-          labelId="month-dd"
-          id="month-dd"
-          value={month}
-          size="small"
-          onChange={handleChange}
+    <>
+      <DashboardCard
+        title="Weekly Spending"
+        action={
+          <Select
+            labelId="month-dd"
+            id="month-dd"
+            value={month}
+            size="small"
+            onChange={handleChange}
+          >
+            <MenuItem value={1}>This Week</MenuItem>
+            <MenuItem value={2}>Last Month</MenuItem>
+            <MenuItem value={3}>Last 3 Months</MenuItem>
+          </Select>
+        }
+      >
+        <Chart
+          options={optionscolumnchart}
+          series={seriescolumnchart}
+          type="bar"
+          height="440px"
+        />
+      </DashboardCard>
+      <Box display="flex" justifyContent="center" paddingTop={2}>
+        <Button
+          variant="contained"
+          color="info"
+          onClick={handleOpenBudgetPlanDialog}
+          size="large"
+          fullWidth={true}
         >
-          <MenuItem value={1}>This Week</MenuItem>
-          <MenuItem value={2}>Last Month</MenuItem>
-          <MenuItem value={3}>Last 3 Months</MenuItem>
-        </Select>
-      }
-    >
-      <Chart
-        options={optionscolumnchart}
-        series={seriescolumnchart}
-        type="bar"
-        height="440px"
-      />
-    </DashboardCard>
+          Start My Budget Plan
+        </Button>
+
+        <BudgetPlanDialog
+          open={isBudgetPlanDialogOpen}
+          onClose={handleCloseBudgetPlanDialog}
+          updateSaving={updateSaving}
+        />
+      </Box>
+    </>
+
   );
 };
 

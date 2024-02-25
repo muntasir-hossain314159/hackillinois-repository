@@ -81,20 +81,20 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
         </IconButton>
         <Box flexGrow={1} />
         <Stack spacing={1} direction="row" alignItems="center">
-        <Box display="flex" justifyContent="center" p={2}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleOpenBudgetPlanDialog}
-        >
-          Start My Budget Plan
-        </Button>
+        {/* <Box display="flex" justifyContent="center" p={2}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleOpenBudgetPlanDialog}
+          >
+            Start My Budget Plan
+          </Button>
 
-        <BudgetPlanDialog
-          open={isBudgetPlanDialogOpen}
-          onClose={handleCloseBudgetPlanDialog}
-        />
-      </Box>
+          <BudgetPlanDialog
+            open={isBudgetPlanDialogOpen}
+            onClose={handleCloseBudgetPlanDialog}
+          />
+        </Box> */}
           <StreakButton/>
           <Profile />
         </Stack>

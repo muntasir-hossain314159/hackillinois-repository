@@ -93,7 +93,7 @@ const YearlyBreakup = () => {
     tooltip: {
       y: {
         formatter: function (val: number) {
-          return "$" + val;
+          return "$" + Math.round(val * 100) / 100;
         },
       },
     },

@@ -11,12 +11,13 @@ interface BudgetPlanDialogProps {
   onClose: () => void; // Explicitly typing the 'onClose' prop as a function that returns void
 }
 
-function BudgetPlanDialog({ open, onClose }: any) {
+function BudgetPlanDialog({ open, onClose, updateSaving }: any) {
   const [amount, setAmount] = useState("");
 
   const handleConfirm = () => {
     // You would also call the local API here
     console.log(`User wants to save: $${amount} per month`);
+    updateSaving(amount);
     onClose(); // Close the dialog
   };
 
