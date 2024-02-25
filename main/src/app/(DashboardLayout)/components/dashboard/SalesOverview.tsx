@@ -176,6 +176,11 @@ const SalesOverview = () => {
     },
     yaxis: {
       tickAmount: 4,
+      labels: {
+        formatter: function (val) {
+          return val.toFixed(2);
+        },
+      },
     },
     xaxis: {
       categories: [
