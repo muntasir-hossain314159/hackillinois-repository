@@ -28,20 +28,6 @@ function Dashboard() {
   };
   return (
     <PageContainer title="Dashboard" description="this is Dashboard">
-      <Box display="flex" justifyContent="center" p={2}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleOpenBudgetPlanDialog}
-        >
-          Start My Budget Plan
-        </Button>
-
-        <BudgetPlanDialog
-          open={isBudgetPlanDialogOpen}
-          onClose={handleCloseBudgetPlanDialog}
-        />
-      </Box>
       <Box>
         <Grid container spacing={3}>
           <Grid item xs={12} lg={6}>

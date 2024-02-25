@@ -251,7 +251,7 @@ app.get('/api/transactions', function (request, response, next) {
           const request = {
             access_token: ACCESS_TOKEN,
             cursor: cursor,
-            count: 50,
+            count: 100,
           };
           const response = await client.transactionsSync(request)
           const data = response.data;
@@ -262,11 +262,11 @@ app.get('/api/transactions', function (request, response, next) {
           hasMore = data.has_more;
           // Update cursor to the next cursor
           cursor = data.next_cursor;
-          console.log("Printing Response");
+          console.log("Printing Response Transaction");
           prettyPrintResponse(response);
         }
 
-        response.json({latest_transactions: added});
+        response.json({transactions: added});
       })
       .catch(next);
 });
@@ -560,7 +560,7 @@ app.get('/api/yearly_breakup', function(request, response, next) {
           hasMore = data.has_more;
           // Update cursor to the next cursor
           cursor = data.next_cursor;
-          console.log("Printing Response");
+          console.log("Printing Response Yearly Backup");
           prettyPrintResponse(response);
         }
   

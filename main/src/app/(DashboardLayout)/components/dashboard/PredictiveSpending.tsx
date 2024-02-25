@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Select, MenuItem, useTheme } from "@mui/material";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 import dynamic from "next/dynamic";
+import { generateResponse } from "../../API/gpt-call";
 //import { generateResponse } from '@/app/(DashboardLayout)/API/gpt-call.ts';
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });

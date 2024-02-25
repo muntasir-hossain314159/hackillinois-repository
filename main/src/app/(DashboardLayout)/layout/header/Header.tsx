@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   AppBar,
@@ -15,12 +15,25 @@ import PropTypes from "prop-types";
 import Profile from "./Profile";
 import StreakButton from "./StreakButton";
 import { IconBellRinging, IconMenu } from "@tabler/icons-react";
+import { BudgetPlanDialog } from "../../components/dashboard/BudgetPlanDialog";
 
 interface ItemType {
   toggleMobileSidebar: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
 const Header = ({ toggleMobileSidebar }: ItemType) => {
+  // State to control the opening of the budget plan dialog
+  const [isBudgetPlanDialogOpen, setBudgetPlanDialogOpen] = useState(false);
+
+  // Function to open the dialog
+  const handleOpenBudgetPlanDialog = () => {
+    setBudgetPlanDialogOpen(true);
+  };
+
+  // Function to close the dialog
+  const handleCloseBudgetPlanDialog = () => {
+    setBudgetPlanDialogOpen(false);
+  };
   // const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   // const lgDown = useMediaQuery((theme) => theme.breakpoints.down('lg'));
 
@@ -68,6 +81,20 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
         </IconButton>
         <Box flexGrow={1} />
         <Stack spacing={1} direction="row" alignItems="center">
+        <Box display="flex" justifyContent="center" p={2}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleOpenBudgetPlanDialog}
+        >
+          Start My Budget Plan
+        </Button>
+
+        <BudgetPlanDialog
+          open={isBudgetPlanDialogOpen}
+          onClose={handleCloseBudgetPlanDialog}
+        />
+      </Box>
           <StreakButton/>
           <Profile />
         </Stack>

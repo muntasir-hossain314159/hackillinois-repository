@@ -1,19 +1,72 @@
-import React from "react";
+"use client"
+
+import React, { useEffect, useState } from "react";
 import { Select, MenuItem } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 import dynamic from "next/dynamic";
 import { Numbers } from "@mui/icons-material";
+import { generateResponse } from "../../API/gpt-call";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const SalesOverview = () => {
   // select
   const [month, setMonth] = React.useState("1");
+  const [loading, setLoading] = useState(true);
+  const [predictedTransactions, setPredictedTransactions] = useState("");
+  const [saving, setSavings] = useState(100);
+  const [retryCount, setRetryCount] = useState(0);
 
   const handleChange = (event: any) => {
     setMonth(event.target.value);
   };
+
+  useEffect(() => {
+      fetchData();
+  }, [retryCount]);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch("/api/transactions");
+      const data = await response.json();
+      console.log(data);
+      const formattedData: string = formatData(data.transactions);
+      const gptResponse = await generateResponse(formattedData, saving);
+      console.log(`CHAT GPT ${gptResponse}`);
+      setPredictedTransactions(gptResponse);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setRetryCount(retryCount + 1);
+    }
+  };
+
+  function formatData(transactions: any[]): string {
+    const formattedData: any[] = [];
+
+    transactions.forEach((element: { authorized_date: any; amount: any; }) => {
+        // Check if there's already an entry for the date in formattedData
+        const existingEntry = formattedData.find(entry => entry.date === element.authorized_date);
+
+        if (existingEntry) {
+            // If the entry exists, add the amount to it
+            existingEntry.amount += element.amount;
+        } else {
+            // If the entry doesn't exist, create a new entry
+            formattedData.push({ date: element.authorized_date, amount: element.amount });
+        }
+    });
+
+    const jsonString = JSON.stringify(formattedData);
+
+    return jsonString;
+}
+
+//get current date
+//get transactions again
+//
+
 
   // chart color
   const theme = useTheme();
@@ -23,11 +76,31 @@ const SalesOverview = () => {
 
   const dailyBudget: number = 100;
 
-  const dailySavings: number[] = [66, 44, 48, 49, 39, 37, 22];
-  const dailyCosts: number[] = [58, 13, 21, 45, 38, 17, 61];
-  const maxDailyBudget = Math.max(
-    ...dailySavings.map((saving, index) => saving + dailyCosts[index])
-  );
+  interface budgetObject {
+    daily_costs: number[];
+    daily_savings: number[];
+}
+
+  let dailySavings: number[] ;
+  let dailyCosts: number[];
+  let maxDailyBudget: number;
+
+  if(predictedTransactions !== "") {
+    let obj: budgetObject = JSON.parse(predictedTransactions);
+    dailySavings = obj.daily_costs //[10, 10, 10, 10, 10, 10, 10];
+    dailyCosts = obj.daily_savings //[58, 13, 21, 45, 38, 17, 61];
+    maxDailyBudget = Math.max(
+      ...dailySavings.map((saving, index) => saving + dailyCosts[index])
+    );
+  } else {
+    dailySavings = [10, 10, 10, 10, 10, 10, 10];
+    dailyCosts = [58, 13, 21, 45, 38, 17, 61];
+    maxDailyBudget = Math.max(
+      ...dailySavings.map((saving, index) => saving + dailyCosts[index])
+    );
+  }
+
+
 
   // chart
   const optionscolumnchart: ApexCharts.ApexOptions = {
@@ -108,6 +181,10 @@ const SalesOverview = () => {
     },
   ];
 
+  if (loading) {
+    return <h1>Loading...</h1>;
+  }
+
   return (
     <DashboardCard
       title="Weekly Spending"
@@ -129,7 +206,7 @@ const SalesOverview = () => {
         options={optionscolumnchart}
         series={seriescolumnchart}
         type="bar"
-        height="400px"
+        height="415px"
       />
     </DashboardCard>
   );
