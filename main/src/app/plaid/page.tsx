@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
 // APP COMPONENT
 // Upon rendering of App component, make a request to create and
 // obtain a link token to be used in the Link component
-import React, { useEffect, useState } from 'react';
-import { usePlaidLink } from 'react-plaid-link';
+import React, { useEffect, useState } from "react";
+import { usePlaidLink } from "react-plaid-link";
 import Button from "plaid-threads/Button";
 import { useRouter } from 'next/navigation'
 
@@ -12,8 +12,8 @@ import { useRouter } from 'next/navigation'
 const Plaid = () => {
   const [linkToken, setLinkToken] = useState(null);
   const generateToken = async () => {
-    const response = await fetch('/api/create_link_token', {
-      method: 'POST',
+    const response = await fetch("/api/create_link_token", {
+      method: "POST",
     });
     const data = await response.json();
     setLinkToken(data.link_token);
@@ -33,10 +33,10 @@ const Link: React.FC<LinkProps> = (props: LinkProps) => {
   const router = useRouter();
   const onSuccess = React.useCallback((public_token: any, metadata: any) => {
     // send public_token to server
-    const response = fetch('/api/set_access_token', {
-      method: 'POST',
+    const response = fetch("/api/set_access_token", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ public_token }),
     })

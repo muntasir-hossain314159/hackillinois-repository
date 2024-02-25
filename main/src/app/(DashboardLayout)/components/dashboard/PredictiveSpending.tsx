@@ -2,8 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Select, MenuItem, useTheme } from "@mui/material";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 import dynamic from "next/dynamic";
+import dotenv from "dotenv";
+import { OpenAI } from "openai";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+
+// dotenv.config();
+
+// const openaiKey = process.env.OPENAI_API_KEY as string;
+// const openai = new OpenAI({
+//   apiKey: openaiKey,
+//   dangerouslyAllowBrowser: true,
+// });
 
 const PredictiveSpending = () => {
   const [data, setData] = useState({ savings: [], costs: [] });

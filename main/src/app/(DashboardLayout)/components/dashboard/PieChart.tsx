@@ -1,76 +1,34 @@
-"use client"
-
 import dynamic from "next/dynamic";
 import { useTheme } from "@mui/material/styles";
 import { Grid, Typography, Box } from "@mui/material";
-import { useState, useEffect } from "react";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 
-//import Chart from "react-apexcharts";
-
 const YearlyBreakup = () => {
-
-  const [loading, setLoading] = useState(true);
-  const [expensesByCategory, setExpensesByCategory] = useState({});
-
-  useEffect(() => {
-      fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await fetch("/api/yearly_breakup");
-      const data = await response.json();
-      console.log(data);
-      setExpensesByCategory(data.expenses_by_category);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setLoading(false);
-    }
-  };
-
   const theme = useTheme();
 
-  // const categories: (keyof typeof categoryColors)[] = [
-  //   "Grocery shopping",
-  //   "Gasoline",
-  //   "Utility bill",
-  //   "Restaurant",
-  //   "Online purchase",
-  //   "Clothing",
-  //   "Entertainment",
-  // ];
+  const categories: (keyof typeof categoryColors)[] = [
+    "Grocery shopping",
+    "Gasoline",
+    "Utility bill",
+    "Restaurant",
+    "Online purchase",
+    "Clothing",
+    "Entertainment",
+  ];
 
-  // const categoryColors: { [key: string]: string } = {
-  //   "Grocery shopping": "#FFA07A", // Light Salmon
-  //   "Gasoline": "#FFD700", // Gold
-  //   "Utility bill": "#87CEEB", // Sky Blue
-  //   "Restaurant": "#32CD32", // Lime Green
-  //   "Online purchase": "#BA55D3", // Medium Orchid
-  //   "Clothing": "#FF4500", // Orange Red
-  //   "Entertainment": "#20B2AA", // Light Sea Green
-  // };
+  const categoryColors: { [key: string]: string } = {
+    "Grocery shopping": "#FFA07A", // Light Salmon
+    "Gasoline": "#FFD700", // Gold
+    "Utility bill": "#87CEEB", // Sky Blue
+    "Restaurant": "#32CD32", // Lime Green
+    "Online purchase": "#BA55D3", // Medium Orchid
+    "Clothing": "#FF4500", // Orange Red
+    "Entertainment": "#20B2AA", // Light Sea Green
+  };
 
-  //const seriesData = [120, 80, 70, 90, 100, 60, 50]; // Replace with actual data
-
-  function getKeysAndValues(inputDict: Record<string, number>): { keys: string[], values: number[] } {
-    if (inputDict == null) {
-      var emptyKey: string[] = [];
-      var emptyValue: number[] = [];
-      return { keys: emptyKey, values: emptyValue };
-    }
-    const keys = Object.keys(inputDict);
-    const values = keys.map(key => inputDict[key]);
-    
-    return { keys, values };
-  }
-
-  const result = getKeysAndValues(expensesByCategory);
-  const categories = result.keys;
-  const seriesData = result.values;
+  const seriesData = [120, 80, 70, 90, 100, 60, 50]; // Replace with actual data
 
   const options: ApexCharts.ApexOptions = {
     chart: {
@@ -81,7 +39,7 @@ const YearlyBreakup = () => {
         show: false,
       },
     },
-    labels: categories.map((category) => category.toString().replace(/_/g, " ")),
+    labels: categories.map((category) => category.toString()),
     legend: {
       show: true,
       offsetY: 0,
@@ -134,7 +92,7 @@ const YearlyBreakup = () => {
         },
       },
     ],
-    //colors: categories.map((category) => categoryColors[category]),
+    colors: categories.map((category) => categoryColors[category]),
 
     dataLabels: {
       enabled: false, // Disable data labels to avoid clutter
@@ -147,10 +105,6 @@ const YearlyBreakup = () => {
       },
     },
   };
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
 
   return (
     <DashboardCard title="Yearly Breakup">
