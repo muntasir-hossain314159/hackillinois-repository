@@ -10,10 +10,13 @@ import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCa
 const YearlyBreakup = () => {
   const [loading, setLoading] = useState(true);
   const [expensesByCategory, setExpensesByCategory] = useState({});
+  const [retryCount, setRetryCount] = useState(0);
+
 
   useEffect(() => {
-    fetchData();
-  }, []);
+      fetchData();
+  }, [retryCount]);
+
 
   const fetchData = async () => {
     try {
@@ -23,7 +26,9 @@ const YearlyBreakup = () => {
       setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
-      setLoading(false);
+      setTimeout(() => {}, 10000); // Adjust the delay as needed
+      setLoading(true);
+      setRetryCount(retryCount + 1);
     }
   };
 
@@ -43,6 +48,11 @@ const YearlyBreakup = () => {
     keys: string[];
     values: number[];
   } {
+    if (inputDict == null) {
+      var emptyKey: string[] = [];
+      var emptyValue: number[] = [];
+      return { keys: emptyKey, values: emptyValue };
+    }
     const keys = Object.keys(inputDict);
     const values = keys.map((key) => inputDict[key]);
     return { keys, values };
@@ -87,11 +97,11 @@ const YearlyBreakup = () => {
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <h1>Loading...</h1>;
   }
 
   return (
-    <DashboardCard title="Yearly Breakup">
+    <DashboardCard title="Spending by Category">
       <Box
         sx={{
           display: "flex",
@@ -105,7 +115,7 @@ const YearlyBreakup = () => {
             options={options}
             series={seriesData}
             type="donut"
-            height="350"
+            height="425"
           />
         </Box>
         <Box
