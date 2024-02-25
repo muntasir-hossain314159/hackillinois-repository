@@ -13,6 +13,7 @@ import PropTypes from "prop-types";
 
 // components
 import Profile from "./Profile";
+import StreakButton from "./StreakButton"
 import { IconBellRinging, IconMenu } from "@tabler/icons-react";
 
 interface ItemType {
@@ -67,6 +68,7 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
         </IconButton>
         <Box flexGrow={1} />
         <Stack spacing={1} direction="row" alignItems="center">
+          <StreakButton />
           <Profile />
         </Stack>
       </ToolbarStyled>
