@@ -16,10 +16,29 @@ export const generateResponse = async (data: string, saving: number): Promise<st
   try {
     const modelId = "gpt-3.5-turbo-instruct"; // Adjust model ID as needed
 
-    const prompt = `${data} is an array that consists of 90 elements. Each element is an object containing the date and amount the person spent on that date. 
-    Taking this ${data} into account, find the pattern in their weekly spending and suggest how much they should be spending and saving every day in a week so that they can meet their ${saving} goal for the month.
-    Return a JSON response where the first key (daily_savings) is an array of 7 elements. Each element in the array is the suggested saving for that day starting from Monday. The second key (daily_costs) is another array of 7 elements. Each element in the array is the suggested spending for that day starting from Monday. LOGICALLY PREDICT WHAT THE DAILY DOLLAR VALUE TO SPEND AND SAVE SHOULD BE FOR THE USER. NO VALUE SHOULD BE 0. ONLY RETURN THE ARRAYS IN A JSON FORMAT WITH THE FIRST KEY AS daily_savings AND THE SECOND AS daily_costs.
-    RETURN THE RESPONSE LIKE THIS JSON FORMAT WITH VALUES ROUNDED TO 2 DECIMAL PLACES AND NOTHING ELSE {"daily_savings": [], "daily_costs": []}`
+    const prompt = `${data} 
+    Taking this array into account, find the pattern in their spending based on the day of the week. The user wants to save ${saving} as their goal for the month. If there was no number in that last sentence, assume they want to save 1000$ a month. Divide the amount they want to save per week by 4 to estimate a month. This amount is the max you can divy up between the two arrays you must create.
+    YOUR TASK: Return a JSON response where the first key (daily_savings) is an array of 7 elements. The second key (daily_costs) is another array of 7 elements. Each element in the array is the suggested spending for that day starting from Sunday. YOU MUST ONLY RETURN THE ARRAYS IN A JSON FORMAT WITH THE FIRST KEY AS daily_savings AND THE SECOND AS daily_costs.
+    RETURN THE RESPONSE LIKE THIS JSON FORMAT ONLY!!!!! {
+  "daily_savings": [
+    20.00,
+    39.27,
+    16.26,
+    63.31,
+    54.42,
+    33.77,
+    49.65
+  ],
+  "daily_costs": [
+    50.03,
+    106.88,
+    87.60,
+    57.61,
+    107.59,
+    60.01,
+    100.08
+  ]
+}` 
 
 
     const result = await openai.completions.create({

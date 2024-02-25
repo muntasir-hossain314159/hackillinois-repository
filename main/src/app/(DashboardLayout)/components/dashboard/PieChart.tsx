@@ -22,12 +22,15 @@ const YearlyBreakup = () => {
     try {
       const response = await fetch("/api/yearly_breakup");
       const data = await response.json();
+      console.log("Pie Chart");
+      console.log(data);
+      if(data.expenses_by_category == null) {
+        throw new Error("Excepenses by category does not exist");
+      }
       setExpensesByCategory(data.expenses_by_category);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
-      setTimeout(() => {}, 10000); // Adjust the delay as needed
-      setLoading(true);
       setRetryCount(retryCount + 1);
     }
   };
@@ -80,7 +83,7 @@ const YearlyBreakup = () => {
     plotOptions: {
       pie: {
         donut: {
-          size: "60%", // Increase the donut size
+          size: "50%", // Increase the donut size
         },
       },
     },
@@ -110,12 +113,12 @@ const YearlyBreakup = () => {
           textAlign: "center",
         }}
       >
-        <Box sx={{ width: "100%", maxWidth: 650, height: "auto" }}>
+        <Box sx={{ width: "100%", maxWidth: 650, height: "400" }}>
           <Chart
             options={options}
             series={seriesData}
             type="donut"
-            height="425"
+            height="400"
           />
         </Box>
         <Box
