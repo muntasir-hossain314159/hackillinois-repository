@@ -23,7 +23,7 @@ const login = async (userData) => {
     return response.data;
   } catch (error) {
     // If login is unsuccessful, throw an error
-    throw new Error(error.response.data.message || "Invalid login credentials");
+    throw new Error("Invalid login credentials");
   }
 };
 
