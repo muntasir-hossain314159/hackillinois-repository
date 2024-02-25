@@ -5,10 +5,10 @@ import { useTheme } from "@mui/material/styles";
 import { Grid, Typography, Box } from "@mui/material";
 import { useState, useEffect } from "react";
 
-//const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 
-import Chart from "react-apexcharts";
+//import Chart from "react-apexcharts";
 
 const YearlyBreakup = () => {
 
@@ -81,7 +81,7 @@ const YearlyBreakup = () => {
         show: false,
       },
     },
-    labels: categories.map((category) => category.toString()),
+    labels: categories.map((category) => category.toString().replace(/_/g, " ")),
     legend: {
       show: true,
       offsetY: 0,
